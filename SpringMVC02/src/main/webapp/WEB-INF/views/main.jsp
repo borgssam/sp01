@@ -14,16 +14,107 @@
   $(document).ready(function(){
 	  loadList();
   });
+  
   function loadList(){
+	//서버와 통신
+	$.ajax({
+		url : "<c:url value='/boardList.do'/>",
+		type:"get",
+		dataType : "json",
+		success : makeView, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
+		error : function(){
+			error("error2");
+		}
+	});		  
+  }
 
-	  //서버와 통신
+  function goContent(idx){	  
+	  var row = $("#c"+idx);
+	  if(row.css("display")=="none") {
+			$.ajax({
+				url : "<c:url value='/boardContent.do'/>",
+				type:"get",
+				data:{"idx":idx},
+				dataType : "json",
+				success :function(data){
+					$("#ta"+idx).val(data.content);
+				}, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
+				error : function(){
+					error("error");
+				}
+			});	  		  
+		  
+	  	row.css("display" , "table-row");
+	  	$("#ta"+idx).attr("readonly", true);  		  		  	
+	  	
+			$.ajax({
+				url : "<c:url value='/boardCount.do'/>",
+				type:"get",
+				data:{"idx":idx},
+				dataType : "json",
+				success :function(data){
+					$("#cnt"+idx).text(data.count);
+				}, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
+				error : function(){
+					error("error");
+				}
+			});	 
+	  	
+	  } else {
+		  
+		  row.css("display", "none");
+	  }
+
+	  
+  }
+  function goInsert(){
+
+	  var fData = $('#frm').serialize();
+
+
 		$.ajax({
-			url : "<c:url value='/boardList.do'/>",
-			type:"get",
+			url : "<c:url value='/boardInsert.do'/>",
+			type:"post",
+			data:fData,
 			dataType : "json",
-			success : makeView, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
+			success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
 			error : function(){
-				error("error2");
+				error("error");
+			}
+		});		
+		
+    $("#fclear").trigger("click");
+	  
+	  
+  }
+
+  function goDelete(idx){
+
+		$.ajax({
+			url : "<c:url value='/boardDelete.do'/>",
+			type:"get",
+			data:{"idx":idx},
+			dataType : "json",
+			success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
+			error : function(){
+				error("error");
+			}
+		});		
+  }
+    
+  function goUpdate(idx){
+	  
+	  var title=$("#nt"+idx).val();
+	  var content=$("#ta"+idx).val();
+
+		$.ajax({
+			url : "<c:url value='/boardUpdate.do'/>",
+			type:"post",
+			data:{"idx":idx, "title":title,"content":content},
+			dataType : "json",
+			success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
+			error : function(){
+				error("error");
 			}
 		});		  
   }
@@ -71,98 +162,18 @@
       $('#view').html(html);
       goList();
   }
-  
-  function goContent(idx){
-	  
-	  var row = $("#c"+idx);
-	  if(row.css("display")=="none") {
-			$.ajax({
-				url : "<c:url value='/boardContent.do'/>",
-				type:"get",
-				data:{"idx":idx},
-				dataType : "json",
-				success :function(data){
-					$("#ta"+idx).val(data.content);
-				}, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
-				error : function(){
-					error("error");
-				}
-			});	  		  
-		  
-	  	row.css("display" , "table-row");
-	  	$("#ta"+idx).attr("readonly", true);  		  		  	
-	  	
-			$.ajax({
-				url : "<c:url value='/boardCount.do'/>",
-				type:"get",
-				data:{"idx":idx},
-				dataType : "json",
-				success :function(data){
-					$("#cnt"+idx).text(data.count);
-				}, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
-				error : function(){
-					error("error");
-				}
-			});	 
-	  	
-	  } else {
-		  
-		  row.css("display", "none");
-	  }
 
-	  
-  }
   function goForm(){
 	  $("#view").css("display","none");
-	  $("#wform").css("display","block");
-	  
+	  $("#wform").css("display","block");	  
   }
   
   function goList(){
 	  $("#view").css("display","block");
-	  $("#wform").css("display","none");
-	  
-  }
-  function goInsert(){
-
-	  var fData = $('#frm').serialize();
-
-
-		$.ajax({
-			url : "<c:url value='/boardInsert.do'/>",
-			type:"post",
-			data:fData,
-			dataType : "json",
-			success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
-			error : function(){
-				error("error");
-			}
-		});		
-		
-    $("#fclear").trigger("click");
-	  
-	  
+	  $("#wform").css("display","none");	  
   }
 
-  function goDelete(idx){
-
-		$.ajax({
-			url : "<c:url value='/boardDelete.do'/>",
-			type:"get",
-			data:{"idx":idx},
-			dataType : "json",
-			success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
-			error : function(){
-				error("error");
-			}
-		});		
-  }
-
-  
-  function goUpdateForm (idx){
-
-
-		
+  function goUpdateForm (idx){	
 
 	  $("#ta"+idx).attr("readonly",false);
 	  var title = $("#t"+idx).text();
@@ -171,25 +182,6 @@
 	  var newButton = "<button class='btn btn-success btn-sm' onclick='goUpdate("+idx+")'>수정</button>";
 	  $("#ub"+idx).html(newButton);  	  	  
   }
-  
-  function goUpdate(idx){
-	  
-	  var title=$("#nt"+idx).val();
-	  var content=$("#ta"+idx).val();
-
-		$.ajax({
-			url : "<c:url value='/boardUpdate.do'/>",
-			type:"post",
-			data:{"idx":idx, "title":title,"content":content},
-			dataType : "json",
-			success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
-			error : function(){
-				error("error");
-			}
-		});	
-	  
-  }
-
   </script>
 </head>
 <body>
