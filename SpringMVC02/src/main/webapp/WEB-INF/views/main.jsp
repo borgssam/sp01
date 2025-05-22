@@ -18,7 +18,7 @@
   function loadList(){
 	//서버와 통신
 	$.ajax({
-		url : "<c:url value='/boardList.do'/>",
+		url : "board/all",
 		type:"get",
 		dataType : "json",
 		success : makeView, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
@@ -32,9 +32,8 @@
 	  var row = $("#c"+idx);
 	  if(row.css("display")=="none") {
 			$.ajax({
-				url : "<c:url value='/boardContent.do'/>",
+				url : "board/"+idx,
 				type:"get",
-				data:{"idx":idx},
 				dataType : "json",
 				success :function(data){
 					$("#ta"+idx).val(data.content);
@@ -48,9 +47,8 @@
 	  	$("#ta"+idx).attr("readonly", true);  		  		  	
 	  	
 			$.ajax({
-				url : "<c:url value='/boardCount.do'/>",
-				type:"get",
-				data:{"idx":idx},
+				url : "board/count/"+idx,
+				type:"put",
 				dataType : "json",
 				success :function(data){
 					$("#cnt"+idx).text(data.count);
@@ -67,33 +65,29 @@
 
 	  
   }
-  function goInsert(){
-
-	  var fData = $('#frm').serialize();
-
-
-		$.ajax({
-			url : "<c:url value='/boardInsert.do'/>",
-			type:"post",
-			data:fData,
-			dataType : "json",
-			success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
-			error : function(){
-				error("error");
-			}
-		});		
-		
-    $("#fclear").trigger("click");
-	  
-	  
+  
+  function goInsert() {
+	var fData = $('#frm').serialize();
+	
+	$.ajax({
+		url : "board/new",
+		type:"post",
+		data:fData,
+		dataType : "json",
+		success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
+		error : function(){
+			error("error");
+		}
+	});		
+	
+	$("#fclear").trigger("click");  	  
   }
 
   function goDelete(idx){
 
 		$.ajax({
-			url : "<c:url value='/boardDelete.do'/>",
-			type:"get",
-			data:{"idx":idx},
+			url : "board/"+idx,
+			type:"delete",
 			dataType : "json",
 			success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
 			error : function(){
@@ -104,19 +98,24 @@
     
   function goUpdate(idx){
 	  
-	  var title=$("#nt"+idx).val();
-	  var content=$("#ta"+idx).val();
-
-		$.ajax({
-			url : "<c:url value='/boardUpdate.do'/>",
-			type:"post",
-			data:{"idx":idx, "title":title,"content":content},
-			dataType : "json",
-			success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
-			error : function(){
-				error("error");
-			}
-		});		  
+	var title=$("#nt"+idx).val();
+	var content=$("#ta"+idx).val();
+		alert(idx+","+title+","+content);
+	$.ajax({
+		url : "board/update",
+		type:"put",
+		contentType: "application/json",  // ★ 꼭 추가
+		data: JSON.stringify({
+			"idx": idx,
+			"title": title,
+			"content": content
+		}),
+		dataType : "json",
+		success :loadList, /// 회원값을 리스트(JSON형식)으로 받기[{  },{  }]
+		error : function(){
+			error("error");
+		}
+	});		  
   }
 
   function makeView(data){

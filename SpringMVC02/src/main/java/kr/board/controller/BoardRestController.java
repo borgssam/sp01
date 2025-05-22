@@ -3,28 +3,34 @@ package kr.board.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.board.entity.Board;
 import kr.board.mapper.BoardMapper;
 
-@RestController
+@RequestMapping("/board")
+@RestController //ajax용 @ResponseBody생략가능
 public class BoardRestController {
 
 	@Autowired
 	BoardMapper boardMapper;
 	
-	@RequestMapping("/boardList.do")
-	public @ResponseBody List<Board> boardList(){ //jackson-databind(객체를 ->json형식으로 변환시켜줌)
+	@GetMapping("/all")
+	public List<Board> boardList(){ //jackson-databind(객체를 ->json형식으로 변환시켜줌)
 		List<Board> list = boardMapper.getLists();		
 		return list; //JSON형식으로 리턴한다는 의미임
 	}
 
-	@RequestMapping("/boardInsert.do")
-	public @ResponseBody int boardInsert(Board vo){ 	
+//	@RequestMapping("/boardInsert.do")
+	@PostMapping("/new")
+	public int boardInsert(Board vo){ 	
 		try {
 			System.out.println("-----------:"+vo);
 		
@@ -35,8 +41,8 @@ public class BoardRestController {
 			return 0;
 		}
 	}
-	@RequestMapping("/boardDelete.do")
-	public @ResponseBody int boardDelete(@RequestParam("idx") int idx){ 	
+	@DeleteMapping("/{idx}")
+	public int boardDelete(@PathVariable("idx") int idx){ 	
 		try {
 			boardMapper.boardDelete(idx);
 			return 1;
@@ -45,8 +51,9 @@ public class BoardRestController {
 			return 0;
 		}
 	}
-	@RequestMapping("/boardUpdate.do")
-	public @ResponseBody int boardUpdate(Board vo){ 	
+	@PutMapping("/update")
+	public int boardUpdate(@RequestBody Board vo){ 	
+		System.out.println("--update--:"+vo);
 		try {
 			boardMapper.boardUpdate(vo);
 			return 1;
@@ -56,8 +63,8 @@ public class BoardRestController {
 		}
 	}
 	
-	@RequestMapping("/boardContent.do")
-	public @ResponseBody Board boardContent(@RequestParam("idx") int idx){ 	
+	@GetMapping("/{idx}")
+	public Board boardContent(@PathVariable("idx") int idx){ 	
 		try {
 			//System.out.println(idx);
 			Board vo = boardMapper.boardContent(idx);
@@ -69,8 +76,8 @@ public class BoardRestController {
 		}
 	}
 	
-	@RequestMapping("/boardCount.do")
-	public @ResponseBody Board boardCount(@RequestParam("idx") int idx){ 	
+	@PutMapping("/count/{idx}")
+	public Board boardCount(@PathVariable("idx") int idx){ 	
 		try {
 			//System.out.println(idx);
 			boardMapper.boardCount(idx);
