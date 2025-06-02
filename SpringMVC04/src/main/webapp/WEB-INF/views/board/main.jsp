@@ -95,9 +95,9 @@
     		 url : "board/new",
     		 type : "post",
     		 data : fData,
-    		 beforeSend: function(xhr){
+    		/* beforeSend: function(xhr){
     			 xhr.setRequestHeader(csrfHeaderName, csrfTokenValue)
-    		 },
+    		 },*/
     		 success : loadList,
     		 error : function() { alert("error"); }    		 
     	 });
@@ -140,9 +140,9 @@
     	 $.ajax({
     		 url : "board/"+idx,
     		 type : "delete",  
-    		 beforeSend: function(xhr){
+    		/* beforeSend: function(xhr){
     			 xhr.setRequestHeader(csrfHeaderName, csrfTokenValue)
-    		 },
+    		 },*/
     		 success : loadList,
     		 error : function(){ alert("error"); }    		 
     	 });
@@ -165,9 +165,9 @@
     		 type : "put",    		 
     		 contentType:'application/json;charset=utf-8',
     		 data : JSON.stringify({"idx":idx,"title":title,"content":content}),
-    		 beforeSend: function(xhr){
+    		/* beforeSend: function(xhr){
     			 xhr.setRequestHeader(csrfHeaderName, csrfTokenValue)
-    		 },
+    		 },*/
     		 success : loadList,
     		 error : function(){ alert("error"); }    		 
     	 });
