@@ -24,6 +24,7 @@ public class BoardRestController {
 	
 	@GetMapping("/all")
 	public List<Board> boardList(){ //jackson-databind(객체를 ->json형식으로 변환시켜줌)
+		System.out.println("여기가 1234");
 		List<Board> list = boardMapper.getLists();		
 		return list; //JSON형식으로 리턴한다는 의미임
 	}
