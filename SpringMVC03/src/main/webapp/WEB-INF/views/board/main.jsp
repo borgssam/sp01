@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"  pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +11,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
   <script type="text/javascript">
   $(document).ready(function(){
 	  loadList();
@@ -68,7 +70,7 @@
   
   function goInsert() {
 	var fData = $('#frm').serialize();
-	
+	alert(fData);
 	$.ajax({
 		url : "board/new",
 		type:"post",
@@ -129,7 +131,7 @@
       
       html += "<tbody>";      
       $.each(data, function(index, obj) {  	   
-    	  var onlyDate = obj.indate.split(' ')[0]; 	
+    	var onlyDate = obj.indate.split(' ')[0]; 	
   	    html += "<tr>";
   	    html += "<td>"+obj.idx+"</td>";
   	    html += "<td id='t"+obj.idx+"'><a href='javascript:goContent("+obj.idx+")' >"+obj.title+"</a></td>";
@@ -142,18 +144,28 @@
   	    html += "<td>내용</td>";  	    
   	    html += "<td colspan='4'>";
   	    html += "<textarea id='ta"+obj.idx+"' rows='7' class='form-control' readonly></textarea>";
-  	    html += "<br/>"
-  	  	html += "<span id='ub"+obj.idx+"'><button type='button' class='btn btn-success btn-sm' onclick='goUpdateForm(" + obj.idx + ")'>수정화면</button></span>&nbsp;"
-  	  	html += "<button type='button' class='btn btn-warning btn-sm' onclick='goDelete(" + obj.idx + ")'>삭제</button>&nbsp;"
-  	  	    
+	  	html += "<br/>";
+  	    if(${!empty mvo} && obj.memID == ${mvo.memID}) {
+  	  		html += "<span id='ub"+obj.idx+"'><button type='button' class='btn btn-success btn-sm' onclick='goUpdateForm(" + obj.idx + ")'>수정화면</button></span>&nbsp;";
+  	  		html += "<button type='button' class='btn btn-warning btn-sm' onclick='goDelete(" + obj.idx + ")'>삭제</button>&nbsp;";
+  	  		
+  	    } else {
+  	  		html += "<span id='ub"+obj.idx+"'><button disabled type='button' class='btn btn-success btn-sm' onclick='goUpdateForm(" + obj.idx + ")'>수정화면</button></span>&nbsp;";
+  	  		html += "<button disabled type='button' class='btn btn-warning btn-sm' onclick='goDelete(" + obj.idx + ")'>삭제</button>&nbsp;";
+  	  		
+  	    	
+  	    	
+  	    }
   	    html += "</tr>";
       });   
-      
- 	    html += "<tr>";
- 	    html += "<td colspan='6' style='text-align:left'>";
- 	    html += "<button class='btn btn-primary btn-sm' onclick='goForm()'>글쓰기</button>";
- 	    html += "</td>";
- 	    html += "</tr>";    
+      if(${!empty mvo}) {
+	 	  html += "<tr>";
+	 	  html += "<td colspan='6' style='text-align:left'>";
+	 	  html += "<button class='btn btn-primary btn-sm' onclick='goForm()'>글쓰기</button>";
+	 	  html += "</td>";
+	 	  html += "</tr>";
+	  }
+ 	  
       html += "</tbody>";
       
       html += "</table>";
@@ -179,14 +191,15 @@
 	  var newInput="<input type='text' id='nt"+idx+"' class='form-control' value='"+title+"'/>";
 	  trTag = $("#t"+idx).html(newInput);
 	  var newButton = "<button class='btn btn-success btn-sm' onclick='goUpdate("+idx+")'>수정</button>";
-	  $("#ub"+idx).html(newButton);  	  	  
+	  $("#ub"+id).html(newButton);  	  	  
   }
   </script>
 </head>
 <body>
- 
-<div class="container">
-  <h2>Spring MVC03</h2>
+
+
+<div class="container"><jsp:include page="../common/header.jsp"/> 
+  <h2>회원 게시판</h2>
   <div id="contents" class="panel panel-default">
     <div class="panel-heading">BOARD</div>
     <div class="panel-body" id="view">PanelContent</div>
@@ -196,8 +209,9 @@
     <table class="table">
     	<tr><td>제목</td><td><input type="text" id="title" name="title" class="form-control"/></td></tr>
     	<tr><td>내용</td><td><textarea rows="12" type="text" id="content" name="content" class="form-control"></textarea></td></tr>
-    	<tr><td>작성자</td><td><input type="text" id="writer" name="writer" class="form-control"/></td></tr>
+    	<tr><td>작성자</td><td><input type="text" id="writer" name="writer" class="form-control" value="${mvo.memName}" readonly=readonly/></td></tr>
      <tr><td colspan="2" align="center">
+     <input type="text" id="memID" name="memID" value="${mvo.memID }"/>
      <button type="button" class="btn btn-success btn-sm" onclick="goInsert()">등록</button>
      <button type="reset" class="btn btn-warning btn-sm" id="fclear">취소</button>
      <button type="button" class="btn btn-info btn-sm" onclick="goList()">목록</button>

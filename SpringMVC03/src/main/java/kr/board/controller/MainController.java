@@ -1,5 +1,4 @@
 package kr.board.controller;
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +12,11 @@ import kr.board.mapper.BoardMapper;
 
 //알바생
 @Controller
-public class BoardController {
-	@RequestMapping("/boardMain.do")
-	public String main() {
-		return "board/main";
-	}			
+public class MainController {
+
+	@RequestMapping("/")
+	public String index() {
+		return "index";
+	}		
+
 }

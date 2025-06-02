@@ -10,6 +10,7 @@ public class Board {
 	private String content;
 	private String writer;
 	private String indate;
+	private String memID;
 	private int count;
 
 }
