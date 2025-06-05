@@ -18,7 +18,7 @@
 
 <update id="memUpdate" parameterType="kr.board.entity.Member" >
 	UPDATE mem_tbl 
-	SET memPassword = #{memPassword},memName = #{memName},memAge = #{memAge},memGender = #{memGender},memEmail = #{memEmail},memProfile = #{memProfile}
+	SET memPassword = #{memPassword},memName = #{memName},memAge = #{memAge},memGender = #{memGender},memEmail = #{memEmail}
 	WHERE memID = #{memID}
 </update>
 	

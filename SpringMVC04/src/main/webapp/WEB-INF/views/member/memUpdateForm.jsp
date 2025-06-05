@@ -156,6 +156,7 @@
 						<tr>
 							<td colspan="3" style="text-align: left;">
 							<span id="pwd_msg" style="color:red;">1</span>
+							<input type="text"   name="${_csrf.parameterName }" value="${_csrf.token }"/>	
 							<input type="button" value="수정" class="btn btn-primary btn-sm pull-right" onclick="goUpdate();" />
 							</td>
 						</tr>

@@ -34,10 +34,10 @@
             <li><a href="${contextPath}/memUpdateForm.do"><span class="glyphicon glyphicon-wrench"></span> 회원정보수정</a></li>
             <li><a href="${contextPath}/memImageForm.do"><span class="glyphicon glyphicon-picture"></span> 사진등록</a></li>
               <c:if test="${!empty mvo}">
-			  	<c:if test="${mvo.memProfile eq '' }">
+			  	<c:if test="${empty mvo.memProfile }">
 			  	  <li><img class="img-circle" src="${contextPath}/resources/images/person.png" style="width:42px;height:42px; margin:4px;"/>${mvo.memName }님</li>
 			  	</c:if>
-			  	<c:if test="${mvo.memProfile ne '' }">
+			  	<c:if test="${!empty mvo.memProfile }">
 			  	  <li><img class="img-circle" src="${contextPath}/resources/upload/${mvo.memProfile}" style="width:42px;height:42px; margin:4px;"/>${mvo.memName }님</li>
 			  	</c:if>  			
 			  </c:if>

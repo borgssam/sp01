@@ -159,6 +159,7 @@
 						</tr>
 						<tr>
 							<td colspan="3" style="text-align: left;">
+							<input type="text"   name="${_csrf.parameterName }" value="${_csrf.token }"/>		
 							<span id="pwd_msg" style="color:red;">1</span>
 							<input type="button" value="등록" class="btn btn-primary btn-sm pull-right" onclick="goInsert();" />
 							</td>

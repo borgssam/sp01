@@ -62,7 +62,7 @@ public class MemberController {
 			
 		}
 		
-		m.setMemProfile("");
+		//m.setMemProfile("");
 		
 		int result = memberMapper.memUpdate(m);
 		System.out.println("-----"+m);
@@ -70,8 +70,9 @@ public class MemberController {
 			//성공
 			rttr.addFlashAttribute("msgType","수전성공");
 			rttr.addFlashAttribute("msg","회원수정 성공");
-			
-			session.setAttribute("mvo", m);
+			Member mvo = memberMapper.getMember(m.getMemID());
+			//Member mvo = memberMapper.memLogin(m);//
+			session.setAttribute("mvo", mvo);
 			return "redirect:/";
 		} else {
 			//실패
