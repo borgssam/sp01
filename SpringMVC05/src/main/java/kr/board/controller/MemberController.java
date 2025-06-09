@@ -107,7 +107,7 @@ public class MemberController {
 	@PostMapping("/memRegister.do")   
 	public String memRegister(Member m, RedirectAttributes rttr, HttpSession session)
 	{		
-		if(
+		if(  
 			m.getMemID() == null || m.getMemID().equals("") ||	
 			m.getMemPassword() == null || m.getMemPassword().equals("") ||	
 			m.getMemName() == null || m.getMemName().equals("") ||	
