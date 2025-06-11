@@ -12,7 +12,8 @@ public interface MemberMapper {
 	public int register(Member m);
 	public int memUpdate(Member m);
 	
-    public Member memLogin(Member mvo);
+	public Member memLogin2(Member mvo);
+	public Member memLogin(String username);
 	public int memProfileUpdate(Member mvo);
 	public void authInsert(AuthVO saveVO); 	
 	public int authDelete(String memID);

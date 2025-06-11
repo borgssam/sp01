@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Spring MVC03/Update</title>
+<title>Spring MVC06/Update</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet"
@@ -84,7 +84,7 @@
 <body>
 	<div class="container">
 		<jsp:include page="../common/header.jsp" />
-		<h2>Spring MVC03</h2>
+		<h2>Spring MVC06</h2>
 		<div class="panel panel-default">
 			<div class="panel-heading">회원정보수정양식</div>
 			<div class="panel-body">

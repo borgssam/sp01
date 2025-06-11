@@ -1,7 +1,32 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"    pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="security" uri="http://www.springframework.org/security/tags" %>   
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
+<c:set var="mvo" value="${SPRING_SECURITY_CONTEXT.authentication.principal}"/> 
+<c:set var="auth" value="${SPRING_SECURITY_CONTEXT.authentication.authorities}"/>
+<script>
+var csrfHeaderName = "${_csrf.headerName}";
+var csrfTokenValue = "${_csrf.token}";
+
+function logout() {
+	$.ajax({
+		url:"${contextPath}/logout",
+		type:"post",
+		beforeSend: function(xhr){
+			xhr.setRequestHeader(csrfHeaderName, csrfTokenValue)
+		},
+		success: function(){
+			location.href="${contextPath}/";
+		},
+		error:function(){
+			alert("error");
+		}
+		
+	});
+	
+}
+</script> 
 
 <nav class="navbar navbar-default">
   <div class="container-fluid">
@@ -17,45 +42,43 @@
       <ul class="nav navbar-nav">
         <li class="active"><a href="${contextPath}">Home</a></li>
         <li><a href="boardMain.do">게시판</a></li>
-        <li><a href="#">Page 2</a></li>
       </ul>
-      <c:if test="${empty mvo}">
+      <security:authorize access="isAnonymous()">      
       <ul class="nav navbar-nav navbar-right">
 
             <li><a href="${contextPath }/memLoginForm.do"><span class="glyphicon glyphicon-log-in"></span> 로그인</a></li>
             <li><a href="${contextPath }/memJoin.do"><span class="glyphicon glyphicon-user"></span> 회원가입</a></li>
 
       </ul>
-      </c:if>
-      
-      <c:if test="${!empty mvo}">
+      </security:authorize>
+      <security:authorize access="isAuthenticated()">
       <ul class="nav navbar-nav navbar-right">
-            <li><a href="memLogout.do"><span class="glyphicon glyphicon-log-out"></span> 로그아웃</a></li>
+            <li><a href="javascript:logout()"><span class="glyphicon glyphicon-log-out"></span> 로그아웃</a></li>
             <li><a href="${contextPath}/memUpdateForm.do"><span class="glyphicon glyphicon-wrench"></span> 회원정보수정</a></li>
             <li><a href="${contextPath}/memImageForm.do"><span class="glyphicon glyphicon-picture"></span> 사진등록</a></li>
               <c:if test="${!empty mvo}">
-			  	<c:if test="${empty mvo.memProfile }">
-			  	  <li><img class="img-circle" src="${contextPath}/resources/images/person.png" style="width:42px;height:42px; margin:4px;"/>${mvo.memName }님 (
-			  	  <c:forEach var="authVO" items="${mvo.authList }">
+			  	<c:if test="${empty mvo.member.memProfile }">
+			  	  <li><img class="img-circle" src="${contextPath}/resources/images/person.png" style="width:42px;height:42px; margin:4px;"/>${mvo.member.memName }님 (
+			  	  <c:forEach var="authVO" items="${mvo.member.authList }">
 			  	  	<c:if test="${authVO.auth eq 'ROLE_USER' }">U</c:if>
 			  	  	<c:if test="${authVO.auth eq 'ROLE_MANAGER' }">M</c:if>
 			  	  	<c:if test="${authVO.auth eq 'ROLE_ADMIN' }">A</c:if>			  	  
 			  	  </c:forEach>			  	  
 			  	  )</li>
 			  	</c:if>
-			  	<c:if test="${!empty mvo.memProfile }">
-			  	  <li><img class="img-circle" src="${contextPath}/resources/upload/${mvo.memProfile}" style="width:42px;height:42px; margin:4px;"/>${mvo.memName }님(
-			  	  <c:forEach var="authVO" items="${mvo.authList }">
-			  	  	<c:if test="${authVO.auth eq 'ROLE_USER' }">U</c:if>
-			  	  	<c:if test="${authVO.auth eq 'ROLE_MANAGER' }">M</c:if>
-			  	  	<c:if test="${authVO.auth eq 'ROLE_ADMIN' }">A</c:if>			  	  
-			  	  </c:forEach>				  	  
-			  	  )</li>
+			  	<c:if test="${!empty mvo.member.memProfile }">
+			  	  <li><img class="img-circle" src="${contextPath}/resources/upload/${mvo.member.memProfile}" style="width:42px;height:42px; margin:4px;"/>${mvo.member.memName }님
+			     (
+			     <security:authorize access="hasRole('ROLE_USER')">  U,  </security:authorize> 
+			     <security:authorize access="hasRole('ROLE_MANAGER')">	 M,	 </security:authorize>  
+			     <security:authorize access="hasRole('ROLE_ADMIN')">  A  </security:authorize>
+			      )
+			      </li>
 			  	</c:if>  			
 			  </c:if>
             
       </ul>
-      </c:if>
+      </security:authorize>
     </div>
   </div>
 </nav>

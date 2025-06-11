@@ -7,6 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,12 +25,17 @@ import com.oreilly.servlet.multipart.DefaultFileRenamePolicy;
 
 import kr.board.entity.AuthVO;
 import kr.board.entity.Member;
+import kr.board.entity.MemberUser;
 import kr.board.mapper.MemberMapper;
+import kr.board.security.MemberUserDetailsService;
 
 @Controller
 public class MemberController {
 	@Autowired
 	MemberMapper memberMapper;
+
+	@Autowired
+	MemberUserDetailsService memberUserDetailsService;
 	
 	@Autowired
 	PasswordEncoder pwEncoder;
@@ -159,12 +168,13 @@ public class MemberController {
 			return "redirect:/memJoin.do";
 		}		
 	}
-
+/*
 	@RequestMapping("/memLogin.do")   
 	public String memLogin(Member m, RedirectAttributes rttr, HttpSession session)
-	{	
+	{
+		System.out.println("memLogin -------------");
+		
 		if(m.getMemID() == null || m.getMemID().equals("")) {
-
 			rttr.addFlashAttribute("msgType","실패메시지");
 			rttr.addFlashAttribute("msg","모든내용일 입력해주세요.");
 			return "redirect:/memLoginForm.do";			
@@ -185,7 +195,7 @@ public class MemberController {
 		
 		return "redirect:/";
 	}
-
+*/
 	@RequestMapping("/memLogout.do")   
 	public String memLogout(HttpSession session)
 	{	
@@ -216,24 +226,18 @@ public class MemberController {
 	{	
 		//파일업로드 API
 		MultipartRequest multi = null;
-		System.out.println("여기요 1");
 		//
 		int fileMaxSize = 1000* 1024 * 1024;
 		String savePath = request.getRealPath("/resources/upload");
 		System.out.println("SAVE_PATH:"+savePath);
-		System.out.println("여기요 1");
 		try {
-			System.out.println("여기요 10");
 			//업로드 시작
 			multi = new MultipartRequest(request,savePath, fileMaxSize, "UTF-8", new DefaultFileRenamePolicy() );
-			System.out.println("여기요 11");
+
 			//업로드 후
 			String memID = multi.getParameter("memID"); // ✅ 이렇게 수정해야 함!
-
-			System.out.println("여기요 12"+memID);
 			String fileName="";
 			File file = multi.getFile("memProfile");
-			System.out.println("여기요 13");
 			if(file != null) { 
 				//업로드 되어 있으면
 				//이미지파일이 아니면 삭제
@@ -243,25 +247,32 @@ public class MemberController {
 					//old이미지, new이미지
 					System.out.println("여기요 1"+memID+"ss");
 					String oldProfile = memberMapper.registerCheck(memID).getMemProfile();
-					System.out.println("여기요 1-1");
 					if(oldProfile != null) {
-						System.out.println("여기요 2");
 						File oldFile = new File(savePath+"/"+oldProfile);
 						if(oldFile.exists()) {oldFile.delete();}	
-						System.out.println("여기요 3");					
 					}
-					System.out.println("여기요 4");
 					String newProfile = file.getName();
 					Member mvo = new Member();
 					mvo.setMemID(memID);
 					mvo.setMemProfile(newProfile);
 					memberMapper.memProfileUpdate(mvo);
-					//memberMapper.
-					rttr.addFlashAttribute("msgType","성공메시지");
-					rttr.addFlashAttribute("msg","프로파일을 성공적으로 업로드했습니다.");
 					
-					Member m = memberMapper.getMember(memID);
-					session.setAttribute("mvo", m);
+					
+					//memberMapper.
+//					rttr.addFlashAttribute("msgType","성공메시지");
+//					rttr.addFlashAttribute("msg","프로파일을 성공적으로 업로드했습니다.");
+//					
+//					Member m = memberMapper.getMember(memID);
+//					session.setAttribute("mvo", m);
+					
+
+					// 스프링보안(새로운 인증 세션을 생성->객체바인딩)
+					Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+					MemberUser userAccount = (MemberUser) authentication.getPrincipal();
+					SecurityContextHolder.getContext().setAuthentication(createNewAuthentication(authentication,userAccount.getMember().getMemID()));
+							
+					rttr.addFlashAttribute("msgType", "성공 메세지");
+					rttr.addFlashAttribute("msg", "이미지 변경이 성공했습니다.");	
 					return "redirect:/";
 					
 				} else {
@@ -287,4 +298,20 @@ public class MemberController {
 		return "redirect:/";
 		
 	}
+
+	 // 스프링 보안(새로운 세션 생성 메서드)
+	 // UsernamePasswordAuthenticationToken -> 회원정보+권한정보
+	 protected Authentication createNewAuthentication(Authentication currentAuth, String username) {
+		    UserDetails newPrincipal = memberUserDetailsService.loadUserByUsername(username);
+		    UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(newPrincipal, currentAuth.getCredentials(), newPrincipal.getAuthorities());
+		    newAuth.setDetails(currentAuth.getDetails());	    
+		    return newAuth;
+	 }
+	 
+	@RequestMapping("/access-denied")   
+	public String showAccessDenied()
+	{	
+		return "/access-denied";
+	}
+	
 }

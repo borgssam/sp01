@@ -2,6 +2,9 @@
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>   
+<c:set var="mvo" value="${SPRING_SECURITY_CONTEXT.authentication.principal}"/> 
+<c:set var="auth" value="${SPRING_SECURITY_CONTEXT.authentication.authorities}"/>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,7 +52,7 @@
         	 listHtml+="<td>내용</td>";
         	 listHtml+="<td colspan='4'>";
         	 listHtml+="<textarea id='ta"+obj.idx+"' readonly rows='7' class='form-control'></textarea>";
-        	 if("${mvo.memID}"==obj.memID){
+        	 if("${mvo.member.memID}"==obj.memID){
         	  listHtml+="<br/>";
         	  listHtml+="<span id='ub"+obj.idx+"'><button class='btn btn-success btn-sm' onclick='goUpdateForm("+obj.idx+")'>수정화면</button></span>&nbsp;";
         	  listHtml+="<button class='btn btn-warning btn-sm' onclick='goDelete("+obj.idx+")'>삭제</button>";        	 
@@ -63,7 +66,7 @@
         	 
     	 } );    
     	 // 로그인을 해야 보이는 부분
-    	 if(${!empty mvo}){
+    	 if(${!empty mvo.member}){
     	  listHtml+="<tr>";
     	  listHtml+="<td colspan='5'>";
     	  listHtml+="<button class='btn btn-primary btn-sm' onclick='goForm()'>글쓰기</button>";
@@ -183,7 +186,7 @@
     <div class="panel-body" id="view">Panel Content</div>
     <div class="panel-body" id="wfrom" style="display: none">
      <form id="frm">
-      <input type="hidden" name="memID" id="memID" value="${mvo.memID}"/>
+      <input type="hidden" name="memID" id="memID" value="${mvo.member.memID}"/>
       <table class="table">
          <tr>
            <td>제목</td>
@@ -195,7 +198,7 @@
          </tr>
          <tr>
            <td>작성자</td>
-           <td><input type="text" id="writer" name="writer" class="form-control" value="${mvo.memName}" readonly="readonly"/></td>
+           <td><input type="text" id="writer" name="writer" class="form-control" value="${mvo.member.memName}" readonly="readonly"/></td>
          </tr>
          <tr>
            <td colspan="2" align="center">
