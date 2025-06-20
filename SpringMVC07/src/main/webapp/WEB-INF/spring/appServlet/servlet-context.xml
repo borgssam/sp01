@@ -22,7 +22,7 @@
 	</beans:bean>
 	
 	<context:component-scan base-package="kr.borgssam.controller" />
-	<context:component-scan base-package="kr.borgssam.service" />
+
 	
 	
 	
