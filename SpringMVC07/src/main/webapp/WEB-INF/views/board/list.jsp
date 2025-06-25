@@ -35,6 +35,10 @@
   			$("#myModal").modal("show");
   		}
   	}
+  	
+  	function goMsg(){
+  		alert("삭제된게시물입니다.");
+  	}
   
   </script>
 </head>
@@ -60,7 +64,7 @@
     	</c:if>
     	<c:if test="${!empty mvo }">
 		<form class="form-inline" action="${cpath}/login/logoutProcess" method="post">		  
-		  <label for="memID">${mvo.memName }님 방문을 환영합니다.</label>		  
+		  <label for="memId">${mvo.memName }님 방문을 환영합니다.</label>		  
 		  <button type="submit" class="btn btn-default">로그아웃</button>
 		</form>
     	</c:if>
@@ -78,7 +82,19 @@
     
     	<tr>
     		<td>${vo.idx }</td>
-    		<td>${vo.title }</td>
+    		<td>   		    		
+    		<c:forEach begin="0" end="${vo.board_level}">&nbsp;</c:forEach>
+    		
+    		<c:if test="${vo.board_available == 1 }">
+    		<a href="${cpath}/board/get?idx=${vo.idx}">
+    		<c:if test="${vo.board_level>0 }">[RE]</c:if> <c:out value="${vo.title }"/> </a>  
+    		</c:if>
+    		<c:if test="${vo.board_available == 0 }">
+    		<a href="javascript:goMsg()">
+    		<c:if test="${vo.board_level>0 }">[RE]</c:if> 삭제된 게시물입니다. </a>      		
+    		</c:if>
+    		   		
+    		</td>
     		<td>${vo.writer }</td>
     		<td><fmt:formatDate value="${vo.indate}" pattern="yyyy-MM-dd"/></td>
     		<td>${vo.count }</td>

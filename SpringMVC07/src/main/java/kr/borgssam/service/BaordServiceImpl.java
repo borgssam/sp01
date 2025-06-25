@@ -30,20 +30,18 @@ public class BaordServiceImpl implements BoardService {
 
 	@Override
 	public Board get(int idx) {
-		// TODO Auto-generated method stub
-		return null;
+		return boardMapper.read(idx);
 	}
 
 	@Override
 	public int remove(int idx) {
-		// TODO Auto-generated method stub
-		return 0;
+		return boardMapper.delete(idx);
 	}
 
 	@Override
 	public int modify(Board vo) {
-		// TODO Auto-generated method stub
-		return 0;
+		
+		return boardMapper.update(vo);
 	}
 
 	@Override
@@ -52,6 +50,22 @@ public class BaordServiceImpl implements BoardService {
 		Member mvo = boardMapper.login(vo);
 		return mvo;
 	}
-	
+
+	@Override
+	public int replyProcess(Board vo) {
+		System.out.println(vo);
+		Board parent = boardMapper.read(vo.getIdx());
+		vo.setBoard_group(parent.getBoard_group());
+		vo.setBoard_sequence(parent.getBoard_sequence()+1);
+		vo.setBoard_level(parent.getBoard_level()+1);
+		vo.setBoard_available(1);
+		boardMapper.replaySeqUpdate(parent);
+
+		System.out.println("-- -- -- -- -- -- -- -- -- -- -- --");
+		System.out.println(vo);
+		
+		int result = boardMapper.replyInsert(vo);
+		return result;
+	}
 
 }

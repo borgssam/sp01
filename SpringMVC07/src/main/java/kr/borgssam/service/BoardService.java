@@ -13,6 +13,7 @@ public interface BoardService {
 	public int modify(Board vo);
 	
 	public Member login(Member vo);
+	public int replyProcess(Board vo);
 	
 
 }

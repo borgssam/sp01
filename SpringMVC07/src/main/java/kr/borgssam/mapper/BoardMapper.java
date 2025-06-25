@@ -17,5 +17,7 @@ public interface BoardMapper { //@, XML
 	
 	
 	public Member login(Member vo);
+	public int replyInsert(Board vo);
+	public void replaySeqUpdate(Board parent);
 
 }

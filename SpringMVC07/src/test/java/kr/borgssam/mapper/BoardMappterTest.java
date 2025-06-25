@@ -24,7 +24,7 @@ public class BoardMappterTest {
 //	@Transactional
 	public void testInsert() throws Exception{
 		Board vo = new Board();
-		vo.setMemID("bit06");
+		vo.setMemId("bit06");
 		vo.setTitle("A");
 		vo.setContent("AAAA");
 		vo.setWriter("관리자1");

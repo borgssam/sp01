@@ -3,7 +3,7 @@
 drop table tbl_board;
 CREATE TABLE tbl_board (
   idx INT(11) NOT NULL ,
-  memID varchar(20) not null,
+  memId varchar(20) not null,
   title VARCHAR(100) NOT NULL,
   content VARCHAR(2000) NOT NULL,
   writer VARCHAR(30) NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE tbl_board (
 
 CREATE TABLE tbl_ (
   memIdx INT(11) NOT NULL,
-  memID VARCHAR(20) NOT NULL,
+  memId VARCHAR(20) NOT NULL,
   memPassword VARCHAR(68) NOT NULL,
   memName VARCHAR(20) NOT NULL,
   memAge INT(11) DEFAULT NULL,
@@ -26,5 +26,5 @@ CREATE TABLE tbl_ (
   memEmail VARCHAR(50) DEFAULT NULL,
   memProfile VARCHAR(50) DEFAULT NULL,
   PRIMARY KEY (memIdx),
-  UNIQUE KEY memID (memID)
+  UNIQUE KEY memId (memId)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8
