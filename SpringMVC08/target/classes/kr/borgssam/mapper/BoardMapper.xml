@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="kr.borgssam.mapper.BoardMapper">
+<select id="getList" parameterType="kr.borgssam.entity.Criteria"  resultType="kr.borgssam.entity.Board">
+	select * from tbl_board order by board_group desc, board_sequence asc
+	limit #{pageStart},#{perPageNum};
+</select>
+
+<select id="totalCount" resultType="int">
+	select count(*) from tbl_board 
+</select>
+
+<select id="read" parameterType="int" resultType="kr.borgssam.entity.Board">
+	select * from tbl_board where idx = #{idx} 
+</select>
+
+<insert id="insert" parameterType="kr.borgssam.entity.Board">
+    INSERT INTO com.tbl_board (
+        idx, memId, title, content, writer, 
+        board_group, board_sequence, board_level, board_available
+    )
+    SELECT 
+		IFNULL(MAX(idx) + 1, 1),#{memId},#{title},#{content},#{writer},
+		IFNULL(MAX(board_group) + 1, 0),0,0,1
+    FROM com.tbl_board
+</insert>
+
+<insert id="insertSelectKey" parameterType="kr.borgssam.entity.Board">
+	<selectKey keyProperty="idx,board_group" resultType="kr.borgssam.entity.Board" order="BEFORE">
+		select IFNULL(MAX(idx) + 1, 1) as idx, IFNULL(MAX(board_group) + 1, 0) as board_group
+		from tbl_board
+	</selectKey>
+
+    INSERT INTO tbl_board (
+        idx, memId, title, content, writer, 
+        board_group, board_sequence, board_level, board_available
+    ) values(
+		#{idx},#{memId},#{title},#{content},#{writer},
+		#{board_group},0,0,1    
+    );
+</insert>
+
+<insert id="replyInsert" parameterType="kr.borgssam.entity.Board">
+	<selectKey keyProperty="idx" resultType="kr.borgssam.entity.Board" order="BEFORE">
+		select IFNULL(MAX(idx) + 1, 1) as idx from tbl_board
+	</selectKey>
+
+    INSERT INTO tbl_board (
+        idx, memId, title, content, writer, 
+        board_group, board_sequence, board_level, board_available
+    ) values(
+		#{idx},#{memId},#{title},#{content},#{writer},
+		#{board_group},#{board_sequence},#{board_level},#{board_available}    
+    );
+</insert>
+
+
+<select id="login" parameterType="kr.borgssam.entity.Member" resultType="kr.borgssam.entity.Member">
+SELECT * from member where memId=#{memId} and memPwd=#{memPwd}
+</select>
+<update id="update" parameterType="kr.borgssam.entity.Member" >
+UPDATE tbl_board SET title=#{title}, content=#{content} WHERE idx = #{idx}
+</update>
+
+<delete id="delete" parameterType="int" >
+update tbl_board set board_available = 0 WHERE idx = #{idx}
+</delete>
+<update id="replaySeqUpdate" parameterType="kr.borgssam.entity.Board" >
+update tbl_board set board_Sequence = board_Sequence + 1 
+where board_group=#{board_group} and board_sequence > #{board_sequence} 
+</update>
+
+</mapper>

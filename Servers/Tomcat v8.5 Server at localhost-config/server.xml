@@ -150,7 +150,7 @@
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log" suffix=".txt"/>
 
       
-      <Context docBase="SpringMVC07" path="/sp07" reloadable="true" source="org.eclipse.jst.jee.server:SpringMVC07"/></Host>
+      <Context docBase="SpringMVC08" path="/sp08" reloadable="true" source="org.eclipse.jst.jee.server:SpringMVC08"/></Host>
     </Engine>
   </Service>
 </Server>
