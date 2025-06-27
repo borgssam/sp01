@@ -22,6 +22,16 @@
   			$("#regBtn").click(function() {
   				location.href="${cpath}/board/register";
   			}); 
+  			
+  			//페이지 번호 클릭시 이동하기
+  			var pageFrm=$("#pageFrm");
+  			$(".paginate_button a").on("click", function(e){
+  				e.preventDefault();// a tag 기능막기
+  				var page=$(this).attr("href");
+  				$('#page').val(page); 				  				
+  				pageFrm.submit();  				  				
+  			});
+
   		}	  	
   	);
   	
@@ -112,30 +122,35 @@
     	<ul class="pagination">
     	<!-- 이전버튼 -->
     	<c:if test="${pageMaker.prev }" >    	
-		  	<li class="paginate_button prev" ><a href="${cpath }/board/list?page=${pageMaker.startPage-1}">이전</a></li>    	
+		  	<li class="paginate_button prev" >
+		  	<a href="${pageMaker.startPage-1}">이전</a>
+		  	</li>    	
     	</c:if>
     	
     	<!-- 페이지번호들 -->
-    	<c:forEach var="pageNum" begin="${pageMaker.startPage}" end="${pageMaker.endPage }">
-    		<c:if test="${pageMaker.cri.page == pageNum }">    		
-  				<li class="active"><a href="#">${pageNum}</a></li>
-    		</c:if>
-    		<c:if test="${pageMaker.cri.page != pageNum }">   
-		  		<li><a href="${cpath }/board/list?page=${pageNum}">${pageNum}</a></li>
-    		</c:if>
-    	
+    	<c:forEach var="pageNum" begin="${pageMaker.startPage}" end="${pageMaker.endPage }"> 
+		  	<li class="paginate_button ${pageMaker.cri.page == pageNum? 'active':''} ">
+		  	<a href="${pageNum}">${pageNum}</a>
+		  	</li>
+ 	
     	</c:forEach>
 		  
     	
     	<!-- 다음버튼 -->
     	<c:if test="${pageMaker.next }" >    	
-		  	<li class="paginate_button next" ><a href="${cpath }/board/list?page=${pageMaker.endPage+1}">다음</a></li>    	
+		  	<li class="paginate_button next" ><a href="${pageMaker.endPage+1}">다음</a></li>    	
     	</c:if>
     
 		</ul>
     </div>
-    
+    <form id="pageFrm" action="${cpath }/board/list" method="get">
+    <input type="hidden" id="page" name="page" value="${pageMaker.cri.page}"/>
+    <input type="hidden" name="perPageNum" value="${pageMaker.cri.perPageNum}"/>    
+    </form>
+
     <!-- 페이징 바 끝 -->
+    
+    
     <!-- 모달 추가 -->
     
 	<!-- Modal -->
